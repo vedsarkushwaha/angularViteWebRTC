@@ -6,7 +6,7 @@ import Peer from 'peerjs';
 function App() {
   const [myUniqueId, setMyUniqueId] = useState<string>("");
 
-  const generateRandomString= () => Math.random().toString(8).substring(2);
+  const generateRandomString= () => Math.random().toString(16).substring(2);
 
   const myVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -17,7 +17,8 @@ function App() {
       if (typeof window !== 'undefined') {
         peer = new Peer(myUniqueId, {
           host: '54.241.147.183',
-          key: 'peerjs',
+          key: 'peerjsKey',
+          secure: true,
           path: '/',
           port: 9000,
           config: {
