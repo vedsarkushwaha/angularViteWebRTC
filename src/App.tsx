@@ -18,7 +18,7 @@ function App() {
         peer = new Peer(myUniqueId, {
           host: '54.241.147.183',
           key: 'peerjs',
-          path: '/peerjs',
+          path: '/',
           port: 9000,
           config: {
             'iceServers': [
