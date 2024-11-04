@@ -5,10 +5,30 @@ import Peer from 'peerjs';
 
 function App() {
   const [myUniqueId, setMyUniqueId] = useState<string>("");
+  const [peerInstance, setPeerInstance] = useState<Peer | null>(null);
+  const [idToCall, setIdToCall] = useState('');
 
   const generateRandomString= () => Math.random().toString(16).substring(2);
 
   const myVideoRef = useRef<HTMLVideoElement>(null);
+  const callingVideoRef = useRef<HTMLVideoElement>(null);
+
+  const handleCall = () => {
+    navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    }).then(stream => {
+      const call = peerInstance?.call(idToCall, stream);
+
+      if(call) {
+        call.on('stream', userVideoStream => {
+          if(callingVideoRef.current) {
+            callingVideoRef.current.srcObject = userVideoStream;
+          }
+        });
+      }
+    });
+  };
 
   useEffect(() => {
     if(myUniqueId) {
@@ -38,6 +58,8 @@ function App() {
           }
         })
 
+        setPeerInstance(peer);
+
         navigator.mediaDevices.getUserMedia({
           video: true,
           audio: true,
@@ -45,6 +67,15 @@ function App() {
           if(myVideoRef.current) {
             myVideoRef.current.srcObject = stream;
           }
+
+          peer.on('call', call => {
+            call.answer(stream);
+            call.on('stream', userVideoStream => {
+              if(callingVideoRef.current) {
+                callingVideoRef.current.srcObject = userVideoStream;
+              }
+            });
+          });
         });
       }
 
@@ -65,9 +96,12 @@ function App() {
       <div className='flex flex-col justify-center items-center p-12'>
         <p> your id: {myUniqueId} </p>
         <video className='w-72' playsInline ref={myVideoRef} autoPlay />
+        <input className='text-black' placeholder="id to call" value={idToCall} onChange={e => setIdToCall(e.target.value)} />
+        <button onClick={handleCall}>call</button>
+        <video className='w-72' playsInline ref={callingVideoRef} autoPlay />
       </div>
     </main>
   );
-}
+};
 
 export default App;
