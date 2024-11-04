@@ -1,10 +1,7 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react";
-import type { Schema } from "../amplify/data/resource";
-import { generateClient } from "aws-amplify/data";
-
-const client = generateClient<Schema>();
+import Peer from 'peerjs';
 
 function App() {
   const [myUniqueId, setMyUniqueId] = useState<string>("");
@@ -14,17 +11,49 @@ function App() {
   const myVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      }).then(stream => {
-        if(myVideoRef.current) {
-          myVideoRef.current.srcObject = stream;
+    if(myUniqueId) {
+      let peer: Peer;
+
+      if (typeof window !== 'undefined') {
+        peer = new Peer(myUniqueId, {
+          host: '54.241.147.183',
+          key: 'peerjs',
+          path: '/peerjs',
+          port: 9000,
+          config: {
+            'iceServers': [
+              {
+                url: 'stun:stun.l.google.com:19302'
+              },
+              {
+                url: 'stun:stun1.l.google.com:19302'
+              },
+              {
+                url: 'turn:54.241.147.183',
+                username: "vomipTurn",
+                credential: "Chess123"
+              },
+            ]
+          }
+        })
+
+        navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        }).then(stream => {
+          if(myVideoRef.current) {
+            myVideoRef.current.srcObject = stream;
+          }
+        });
+      }
+
+      return () => {
+        if(peer) {
+          peer.destroy();
         }
-      });
+      };
     }
-  }, []);
+  }, [myUniqueId]);
 
   useEffect(() => {
     setMyUniqueId(generateRandomString);
