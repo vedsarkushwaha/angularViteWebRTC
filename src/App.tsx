@@ -19,13 +19,8 @@ function App() {
 
   return (
     <main>
-      <video class="remote-video" autoplay></video>
-      <input type="text" id="connect-to-peer" />
-      <button onclick="connectToPeer()">
-        Connect
-      </button>
-      
-      <div class="messages">
+      <div>
+        <p> Hello world! </p>
       </div>
 
 
