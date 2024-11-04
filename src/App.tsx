@@ -7,7 +7,20 @@ const client = generateClient<Schema>();
 function App() {
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
 
+  const myVideoRef = useRef<HTMLVideoElement>(null);
+
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      }).then(stream => {
+        if(myVideoRef.current) {
+          myVideoRef.current.srcObject = stream;
+        }
+      });
+    }
+
     client.models.Todo.observeQuery().subscribe({
       next: (data) => setTodos([...data.items]),
     });
@@ -19,8 +32,9 @@ function App() {
 
   return (
     <main>
-      <div>
+      <div className='flex flex-col justify-center items-center p-12'>
         <p> Hello world! </p>
+        <video className='w-72' playsInline ref={myVideoRef} autoPlay />
       </div>
 
 
