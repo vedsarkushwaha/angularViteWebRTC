@@ -36,8 +36,6 @@ function App() {
 
       if (typeof window !== 'undefined') {
         peer = new Peer(myUniqueId, {
-          host: '54.241.147.183',
-          key: 'peerjs',
           secure: true,
           path: '/',
           port: 9000,
