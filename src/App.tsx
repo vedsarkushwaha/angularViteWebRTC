@@ -9,6 +9,10 @@ const client = generateClient<Schema>();
 function App() {
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
 
+  const [myUniqueId, setMyUniqueId] = useState<string>("");
+
+  const generateRandomString= () => Math.random().toString(8).substring(2);
+
   const myVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -28,6 +32,10 @@ function App() {
     });
   }, []);
 
+  useEffect(() => {
+    setMyUniqueId(generateRandomString);
+  }, [])
+
   function createTodo() {
     client.models.Todo.create({ content: window.prompt("Todo content") });
   }
@@ -35,7 +43,7 @@ function App() {
   return (
     <main>
       <div className='flex flex-col justify-center items-center p-12'>
-        <p> Hello world! </p>
+        <p> your id: {myUniqueId} </p>
         <video className='w-72' playsInline ref={myVideoRef} autoPlay />
       </div>
 
